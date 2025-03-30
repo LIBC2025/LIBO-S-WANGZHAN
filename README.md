@@ -13,4 +13,4 @@ This is a personal resume website template designed to showcase your professiona
 
 1. **Clone the Repository**: Clone this repository to your local machine.
    ```bash
-   git clone https://github.com/your-username/resume-site.git
+   git clone https://github.com/weigo6/resume-site.git
