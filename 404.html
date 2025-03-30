@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>404 Not Found</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #1a1a1a;
+            color: white;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            overflow: hidden;
+        }
+       .error-container {
+            text-align: center;
+            animation: fadeIn 1s ease-in-out;
+        }
+       .error-code {
+            font-size: 12em;
+            font-weight: bold;
+            margin: 0;
+            color: #ff3b3f;
+            text-shadow: 0 0 20px rgba(255, 59, 63, 0.7);
+        }
+       .error-message {
+            font-size: 2em;
+            margin: 10px 0;
+        }
+       .back-home {
+            display: inline-block;
+            background-color: #ff3b3f;
+            color: white;
+            padding: 15px 30px;
+            margin-top: 20px;
+            text-decoration: none;
+            border-radius: 5px;
+            font-size: 1.2em;
+            transition: background-color 0.3s ease;
+        }
+       .back-home:hover {
+            background-color: #e62b2f;
+        }
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="error-container">
+        <h1 class="error-code">404</h1>
+        <p class="error-message">Oops! The page you're looking for can't be found.</p>
+        <a href="#" class="back-home">Back to Home</a>
+    </div>
+</body>
+</html>
+    

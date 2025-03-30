@@ -1,0 +1,669 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <!-- 字符编码设置 -->
+    <meta charset="UTF-8">
+    <!-- 响应式设计视口设置 -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- 页面标题 -->
+    <title>个人简历 - 张三</title>
+    <!-- 引入Font Awesome图标库 -->
+    <link href="https://cdn.bootcdn.net/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <!-- 自定义样式 -->
+    <style>
+        :root {
+            --primary: #3498db;
+            --secondary: #2ecc71;
+            --dark: #2c3e50;
+            --light: #ecf0f1;
+            --card-bg: rgba(255, 255, 255, 0.9);
+            --sidebar-width: 300px;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', 'Microsoft YaHei', sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            min-height: 100vh;
+            padding: 2rem;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            position: relative;
+        }
+
+        /* 左侧固定栏 */
+        .profile-section {
+            width: var(--sidebar-width);
+            position: fixed;
+            left: calc(50% - 600px);
+            top: 2rem;
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+            overflow: hidden;
+            /* 添加阴影虚化效果 */
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            backdrop-filter: blur(5px);
+            border-radius: 15px;
+        }
+
+        .profile-card {
+            background: var(--card-bg);
+            border-radius: 15px;
+            padding: 2rem;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+            /* 确保子元素溢出时不影响圆角 */
+            transition: transform 0.3s ease;
+        }
+
+        /* 鼠标悬浮在左侧栏卡片上的动效 */
+        .profile-card:hover {
+            transform: scale(1.02);
+        }
+
+        /* 联系方式滚动容器 */
+        .contact-scroll {
+            overflow-y: auto;
+            padding-right: 0.5rem;
+            border-radius: 8px;
+            /* 添加圆角 */
+            max-height: calc(100vh - 420px); /* 根据窗口高度动态调整最大高度 */
+        }
+
+        .contact-scroll::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .contact-scroll::-webkit-scrollbar-track {
+            background: rgba(0, 0, 0, 0.05);
+            border-radius: 3px;
+        }
+
+        .contact-scroll::-webkit-scrollbar-thumb {
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 3px;
+        }
+
+        .avatar {
+            width: 180px;
+            height: 180px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 5px solid white;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+            display: block;
+            margin: 0 auto;
+        }
+
+        .name {
+            font-size: 1.8rem;
+            font-weight: bold;
+            color: var(--dark);
+            margin: 1rem 0 0.5rem;
+            text-align: center;
+        }
+
+        .english-name {
+            font-size: 1.1rem;
+            color: #666;
+            text-align: center;
+            margin-bottom: 1.5rem;
+        }
+
+        /* 联系方式样式 */
+        .contact-list {
+            margin-top: 0rem;
+        }
+
+        .contact-item {
+            display: flex;
+            align-items: center;
+            padding: 0.8rem;
+            margin-bottom: 0.8rem;
+            background: rgba(52, 152, 219, 0.05);
+            border-radius: 8px;
+            transition: all 0.3s ease;
+        }
+
+        .contact-item:hover {
+            background: rgba(52, 152, 219, 0.1);
+            transform: translateX(5px);
+        }
+
+        .contact-item:last-child {
+            margin-bottom: 0; /* 最后一个联系卡片与滚动容器底部对齐 */
+        }
+
+        .contact-icon {
+            width: 36px;
+            height: 36px;
+            background: var(--primary);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 1rem;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        /* 右侧滚动内容 */
+        .content-section {
+            margin-left: calc(var(--sidebar-width) + 2rem);
+            width: calc(100% - var(--sidebar-width) - 2rem);
+            display: flex;
+            flex-direction: column;
+            /* 缩小纵向布局时卡片上下的间距 */
+            gap: 1.2rem;
+            min-height: 100vh;
+        }
+
+        .card {
+            background: var(--card-bg);
+            border-radius: 15px;
+            padding: 2rem;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+            opacity: 0;
+            transform: translateY(20px);
+        }
+
+        .card.active {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* 鼠标悬浮在右侧卡片上的动效 */
+        .card:hover {
+            transform: scale(1.02);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        }
+
+        .card-title {
+            font-size: 1.4rem;
+            color: var(--dark);
+            margin-bottom: 1.5rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 2px solid var(--primary);
+        }
+
+        /* 时间轴样式 */
+        .timeline {
+            position: relative;
+            padding-left: 30px;
+        }
+
+        .timeline::before {
+            content: '';
+            position: absolute;
+            left: 10px;
+            top: 0;
+            bottom: 0;
+            width: 2px;
+            background: var(--primary);
+        }
+
+        .timeline-item {
+            position: relative;
+            margin-bottom: 0.5rem;
+            padding-bottom: 1.5rem;
+        }
+
+        .timeline-item::before {
+            content: '';
+            position: absolute;
+            left: -30px;
+            top: 5px;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: var(--secondary);
+            border: 2px solid white;
+            box-shadow: 0 0 0 3px var(--secondary);
+        }
+
+        /* 证书展示 */
+        .certificate-scroll {
+            overflow: hidden;
+            position: relative;
+            padding: 1rem 0;
+            margin: 0 -2rem;
+        }
+
+        .certificate-container {
+            display: flex;
+            animation: scroll 20s linear infinite;
+            gap: 1.5rem;
+            padding: 0 2rem;
+            width: max-content;
+        }
+
+        .certificate-img {
+            width: 220px;
+            height: 160px;
+            object-fit: cover;
+            border-radius: 8px;
+            border: 2px solid var(--light);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            flex-shrink: 0;
+            cursor: pointer;
+            transform-origin: center center;
+        }
+
+        .certificate-img:hover {
+            transform: scale(1.8);
+            z-index: 10;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        @keyframes scroll {
+            0% {
+                transform: translateX(0);
+            }
+            /*5 张图片的总宽度 + 4 个间隙的总间距，不包括需要重复的图片数量，计算图片容器需要移动的总距离*/
+            100% {
+                transform: translateX(calc(-220px * 5 - 1.5rem * 4));
+            }
+        }
+
+        /* 响应式设计 */
+        @media (max-width: 1200px) {
+            .profile-section {
+                left: 2rem;
+            }
+        }
+
+        @media (max-width: 992px) {
+            .profile-section {
+                position: relative;
+                width: 100%;
+                height: auto;
+                left: auto;
+                top: auto;
+                margin-bottom: 2rem;
+            }
+
+            .content-section {
+                margin-left: 0;
+                width: 100%;
+            }
+
+            .contact-scroll {
+                /*max-height: calc(100vh - 925px);*/ /* 根据屏幕高度动态调整 */
+                max-height: 150px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            body {
+                padding: 1rem;
+            }
+
+            .avatar {
+                width: 140px;
+                height: 140px;
+            }
+
+            .certificate-img {
+                width: 180px;
+                height: 130px;
+            }
+
+            @keyframes scroll {
+                100% {
+                    transform: translateX(calc(-180px * 5 - 1rem * 4));
+                }
+            }
+        }
+
+        /* 联系方式去除链接默认样式 */
+        .contact-item a {
+            color: inherit;
+            text-decoration: none;
+        }
+
+        /* 个人特长样式增强 */
+            /* 
+        * 样式规则集，用于定义 `#specialty-card` 元素内的段落 (`p`) 的样式。
+        * 包括相对定位、左侧内边距、行高、字体大小、颜色以及悬停时的平移效果。
+        */
+        #specialty-card p {
+            position: relative;
+            padding-left: 40px;
+            margin-bottom: 1.2rem;
+            line-height: 1.6;
+            font-size: 1.1rem;
+            color: #4a5568;
+            transition: transform 0.3s ease;
+        }
+
+        /* 
+            * 使用伪元素 `::before` 在段落前添加图标。
+            * 图标来自 Font Awesome 6 Free 字体库，使用线性渐变背景和透明文本颜色实现渐变效果。
+            */
+        #specialty-card p::before {
+            content: "\f121";
+            font-family: "Font Awesome 6 Free";
+            font-weight: 900;
+            position: absolute;
+            left: 0;
+            top: 2px;
+            color: var(--primary);
+            font-size: 1.4rem;
+            width: 30px;
+            height: 30px;
+            background: linear-gradient(45deg, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            color: transparent; /* 关键属性 */
+        }
+
+        /* 
+            * 针对第二个段落的伪元素 `::before`，使用不同的 Font Awesome 图标。
+            */
+        #specialty-card p:nth-child(2)::before {
+            content: "\f0c0";
+        }
+
+        /* 
+            * 针对最后一个段落的伪元素 `::before`，使用不同的 Font Awesome 图标。
+            */
+        #specialty-card p:last-child::before {
+            content: "\f0eb";
+        }
+
+        /* 
+            * 定义 `#specialty-card` 内 `strong` 元素的样式。
+            * 使用线性渐变背景和透明文本颜色实现渐变效果。
+            */
+        #specialty-card strong {
+            background: linear-gradient(45deg, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            color: transparent; /* 关键属性 */
+            font-weight: 600;
+        }
+
+        /* 
+            * 定义 `#specialty-card` 内段落 (`p`) 的悬停效果。
+            * 悬停时段落向右平移 10px。
+            */
+        #specialty-card p:hover {
+            transform: translateX(10px);
+        }
+
+        /* 
+            * 定义 `#specialty-card` 内除最后一个段落外的所有段落的底部边框样式。
+            * 使用虚线边框和半透明颜色。
+            */
+        #specialty-card p:not(:last-child) {
+            border-bottom: 1px dashed rgba(52, 152, 219, 0.2);
+            padding-bottom: 1rem;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- 容器 -->
+    <div class="container">
+        <!-- 左侧栏 -->
+        <section class="profile-section">
+            <div class="profile-card">
+                <div class="avatar-container">
+                    <!-- 头像 -->
+                    <img src="./pic.png" alt="个人头像" class="avatar">
+                    <!-- 姓名 -->
+                    <h1 class="name">张三</h1>
+                    <!-- 英文名 -->
+                    <p class="english-name">Zhang San</p>
+                </div>
+
+                <div class="contact-scroll">
+                    <div class="contact-list">
+                        <!-- 微信联系方式 -->
+                        <div class="contact-item">
+                            <div class="contact-icon"><i class="fab fa-weixin"></i></div>
+                            <div>
+                                <strong>微信</strong>
+                                <p>zhangsan123</p>
+                            </div>
+                        </div>
+                        <!-- 其他联系方式项 -->
+                        <div class="contact-item">
+                            <div class="contact-icon"><i class="fab fa-qq"></i></div>
+                            <div>
+                                <strong>QQ</strong>
+                                <p>123456789</p>
+                            </div>
+                        </div>
+                        <div class="contact-item">
+                            <div class="contact-icon"><i class="fas fa-phone"></i></div>
+                            <div>
+                                <strong>手机</strong>
+                                <p>138-1234-5678</p>
+                            </div>
+                        </div>
+                        <div class="contact-item">
+                            <div class="contact-icon"><i class="fas fa-envelope"></i></div>
+                            <div>
+                                <strong>邮箱</strong>
+                                <p>zhangsan@example.com</p>
+                            </div>
+                        </div>
+                        <!-- 为B站添加跳转链接 -->
+                        <div class="contact-item">
+                            <div class="contact-icon"><i class="fab fa-bilibili"></i></div>
+                            <a href="https://space.bilibili.com/your-bilibili-id" target="_blank">
+                                <div>
+                                    <strong>B站</strong>
+                                    <p>张三的B站</p>
+                                </div>
+                            </a>
+                        </div>
+                        <!-- 为GitHub添加跳转链接 -->
+                        <div class="contact-item">
+                            <div class="contact-icon"><i class="fab fa-github"></i></div>
+                            <a href="https://github.com/zhangsan" target="_blank">
+                                <div>
+                                    <strong>GitHub</strong>
+                                    <p>github.com/zhangsan</p>
+                                </div>
+                            </a>
+                        </div>
+                        <!-- 为Gitee添加跳转链接 -->
+                        <div class="contact-item">
+                            <div class="contact-icon"><i class="fab fa-gitlab"></i></div>
+                            <a href="https://gitee.com/zhangsan" target="_blank">
+                                <div>
+                                    <strong>Gitee</strong>
+                                    <p>gitee.com/zhangsan</p>
+                                </div>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 右侧内容 -->
+        <section class="content-section">
+            <!-- 教育经历与荣誉卡片 -->
+            <div class="card" id="education-card">
+                <h2 class="card-title">教育经历与荣誉</h2>
+                <div class="timeline">
+                    <!-- 时间轴项 -->
+                    <div class="timeline-item">
+                        <div class="timeline-date">2020 - 2024</div>
+                        <h3 class="timeline-title">XX大学 - 计算机科学与技术</h3>
+                        <p>GPA: 3.8/4.0 | 专业排名: 前5%</p>
+                        <p>获得国家奖学金、校级三好学生</p>
+                    </div>
+                    <div class="timeline-item">
+                        <div class="timeline-date">2022</div>
+                        <h3 class="timeline-title">英语六级</h3>
+                        <p>成绩: 580分</p>
+                    </div>
+                    <div class="timeline-item">
+                        <div class="timeline-date">2021</div>
+                        <h3 class="timeline-title">计算机技术与软件专业技术资格</h3>
+                        <p>软件设计师(中级)认证</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card" id="competition-card">
+                <h2 class="card-title">学科竞赛</h2>
+                <div class="timeline">
+                    <div class="timeline-item">
+                        <div class="timeline-date">2023</div>
+                        <h3 class="timeline-title">全国大学生程序设计竞赛</h3>
+                        <p>国家级一等奖 | 负责算法设计与实现</p>
+                    </div>
+                    <div class="timeline-item">
+                        <div class="timeline-date">2022</div>
+                        <h3 class="timeline-title">"互联网+"大学生创新创业大赛</h3>
+                        <p>省级金奖 | 项目负责人</p>
+                    </div>
+                    <div class="timeline-item">
+                        <div class="timeline-date">2021</div>
+                        <h3 class="timeline-title">数学建模竞赛</h3>
+                        <p>全国二等奖 | 负责模型建立与求解</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card" id="project-card">
+                <h2 class="card-title">论文与项目</h2>
+                <div class="timeline">
+                    <div class="timeline-item">
+                        <div class="timeline-date">2023</div>
+                        <h3 class="timeline-title">基于深度学习的图像识别系统</h3>
+                        <p>发表论文于《计算机应用研究》</p>
+                        <p>项目链接: github.com/zhangsan/image-recognition</p>
+                    </div>
+                    <div class="timeline-item">
+                        <div class="timeline-date">2022</div>
+                        <h3 class="timeline-title">校园二手交易平台</h3>
+                        <p>负责前端开发与UI设计</p>
+                        <p>用户量超过5000+</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 个人特长卡片模块 -->
+            <div class="card" id="specialty-card">
+                <h2 class="card-title">个人特长</h2>
+                <p>具备扎实的编程基础，熟练掌握 Java、Python 等编程语言。</p>
+                <p>拥有良好的团队协作能力，曾在多个项目中担任核心成员，带领团队完成任务。</p>
+                <p>具备较强的学习能力，能够快速掌握新的知识和技能，适应新的工作环境。</p>
+            </div>
+
+            <div class="card" id="certificate-card">
+                <h2 class="card-title">证书展示</h2>
+                <div class="certificate-scroll">
+                    <div class="certificate-container">
+                        <img src="https://dummyimage.com/220x160/008080/ffffff&text=风景1" alt="证书" class="certificate-img" loading="lazy">
+                        <img src="https://dummyimage.com/220x160/008B8B/ffffff&text=风景2" alt="证书" class="certificate-img" loading="lazy">
+                        <img src="https://dummyimage.com/220x160/009696/ffffff&text=风景3" alt="证书" class="certificate-img" loading="lazy">
+                        <img src="https://dummyimage.com/220x160/00A3A3/ffffff&text=风景4" alt="证书" class="certificate-img" loading="lazy">
+                        <img src="https://dummyimage.com/220x160/00B0B0/ffffff&text=风景5" alt="证书" class="certificate-img" loading="lazy">
+                        <!-- 重复图片实现无缝循环 -->
+                        <img src="https://dummyimage.com/220x160/008080/ffffff&text=风景1" alt="证书" class="certificate-img" loading="lazy">
+                        <img src="https://dummyimage.com/220x160/008B8B/ffffff&text=风景2" alt="证书" class="certificate-img" loading="lazy">
+                        <img src="https://dummyimage.com/220x160/009696/ffffff&text=风景3" alt="证书" class="certificate-img" loading="lazy">
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <script>
+        // 页面加载完成后执行
+        document.addEventListener('DOMContentLoaded', () => {
+            // 卡片进入视口动画
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('active');
+                    }
+                });
+            }, {
+                threshold: 0.1
+            });
+
+            document.querySelectorAll('.card').forEach(card => {
+                observer.observe(card);
+            });
+
+            // 自动调整证书滚动速度
+            const updateScrollSpeed = () => {
+                const container = document.querySelector('.certificate-container');
+                const imgs = document.querySelectorAll('.certificate-img');
+                const imgWidth = imgs[0].offsetWidth;
+                const gap = 24;
+                // 与CSS中的gap值一致
+                const totalWidth = (imgWidth + gap) * imgs.length;
+                const viewportWidth = document.documentElement.clientWidth;
+                const speedRatio = viewportWidth < 768 ? 0.8 : 1;
+
+                container.style.animationDuration = `${totalWidth / 100 * speedRatio}s`;
+            }
+
+            window.addEventListener('resize', updateScrollSpeed);
+            updateScrollSpeed();
+
+            // 联系图标动画
+            /**
+             * 为所有带有类名 'contact-item' 的元素添加鼠标悬停动画效果。
+             * 当鼠标进入元素时，其子元素 '.contact-icon' 会旋转 15 度并放大 1.1 倍。
+             * 当鼠标离开元素时，动画效果会被移除，恢复原始状态。
+             */
+            document.querySelectorAll('.contact-item').forEach(item => {
+                item.addEventListener('mouseenter', () => {
+                    item.querySelector('.contact-icon').style.transform = 'rotate(15deg) scale(1.1)';
+                });
+                item.addEventListener('mouseleave', () => {
+                    item.querySelector('.contact-icon').style.transform = 'none';
+                });
+            });
+
+            // 证书悬停暂停
+            document.querySelectorAll('.certificate-img').forEach(img => {
+                img.addEventListener('mouseenter', () => {
+                    img.style.transform = 'scale(1.8)';
+                    img.style.zIndex = '10';
+                });
+
+                img.addEventListener('mouseleave', () => {
+                    img.style.transform = 'scale(1)';
+                    img.style.zIndex = '1';
+                });
+            });
+
+            // 响应式调整
+            window.addEventListener('resize', () => {
+                const isMobile = window.innerWidth <= 992;
+                const certificateContainer = document.querySelector('.certificate-container');
+                const animationDuration = parseFloat(getComputedStyle(certificateContainer).animationDuration.replace('s', ''));
+                certificateContainer.style.animationDuration = isMobile ? `${animationDuration * 0.8}s` : `${animationDuration}s`;
+            });
+        });
+    </script>
+</body>
+
+</html>    
