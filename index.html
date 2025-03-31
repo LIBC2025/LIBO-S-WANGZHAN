@@ -1,661 +1,749 @@
 <!DOCTYPE html>
+<!-- 声明文档为 HTML5 文档 -->
 <html lang="zh-CN">
-
-<head>
-    <!-- 字符编码设置 -->
-    <meta charset="UTF-8">
-    <!-- 响应式设计视口设置 -->
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <!-- 页面标题 -->
-    <title>个人简历 - 张三</title>
-    <!-- 引入Font Awesome图标库 -->
-    <link href="https://cdn.bootcdn.net/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
-    <!-- 自定义样式 -->
-    <style>
-        :root {
-            --primary: #3498db;
-            --secondary: #2ecc71;
-            --dark: #2c3e50;
-            --light: #ecf0f1;
-            --card-bg: rgba(255, 255, 255, 0.9);
-            --sidebar-width: 300px;
-        }
-
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Segoe UI', 'Microsoft YaHei', sans-serif;
-        }
-
-        body {
-            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
-            min-height: 100vh;
-            padding: 2rem;
-        }
-
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            position: relative;
-        }
-
-        /* 左侧固定栏 */
-        .profile-section {
-            width: var(--sidebar-width);
-            position: fixed;
-            left: calc(50% - 600px);
-            top: 2rem;
-            display: flex;
-            flex-direction: column;
-            gap: 1.5rem;
-            overflow: hidden;
-            /* 添加阴影虚化效果 */
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
-            backdrop-filter: blur(5px);
-            border-radius: 15px;
-        }
-
-        .profile-card {
-            background: var(--card-bg);
-            border-radius: 15px;
-            padding: 2rem;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
-            overflow: hidden;
-            /* 确保子元素溢出时不影响圆角 */
-            transition: transform 0.3s ease;
-        }
-
-        /* 鼠标悬浮在左侧栏卡片上的动效 */
-        .profile-card:hover {
-            transform: scale(1.02);
-        }
-
-        /* 联系方式滚动容器 */
-        .contact-scroll {
-            overflow-y: auto;
-            padding-right: 0.5rem;
-            border-radius: 8px;
-            /* 添加圆角 */
-            max-height: calc(100vh - 420px); /* 根据窗口高度动态调整最大高度 */
-        }
-
-        .contact-scroll::-webkit-scrollbar {
-            width: 6px;
-        }
-
-        .contact-scroll::-webkit-scrollbar-track {
-            background: rgba(0, 0, 0, 0.05);
-            border-radius: 3px;
-        }
-
-        .contact-scroll::-webkit-scrollbar-thumb {
-            background: rgba(0, 0, 0, 0.2);
-            border-radius: 3px;
-        }
-
-        .avatar {
-            width: 180px;
-            height: 180px;
-            border-radius: 50%;
-            object-fit: cover;
-            border: 5px solid white;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
-            transition: all 0.3s ease;
-            display: block;
-            margin: 0 auto;
-        }
-
-        .name {
-            font-size: 1.8rem;
-            font-weight: bold;
-            color: var(--dark);
-            margin: 1rem 0 0.5rem;
-            text-align: center;
-        }
-
-        .english-name {
-            font-size: 1.1rem;
-            color: #666;
-            text-align: center;
-            margin-bottom: 1.5rem;
-        }
-
-        /* 联系方式样式 */
-        .contact-list {
-            margin-top: 0rem;
-        }
-
-        .contact-item {
-            display: flex;
-            align-items: center;
-            padding: 0.8rem;
-            margin-bottom: 0.8rem;
-            background: rgba(52, 152, 219, 0.05);
-            border-radius: 8px;
-            transition: all 0.3s ease;
-        }
-
-        .contact-item:hover {
-            background: rgba(52, 152, 219, 0.1);
-            transform: translateX(5px);
-        }
-
-        .contact-item:last-child {
-            margin-bottom: 0; /* 最后一个联系卡片与滚动容器底部对齐 */
-        }
-
-        .contact-icon {
-            width: 36px;
-            height: 36px;
-            background: var(--primary);
-            color: white;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin-right: 1rem;
-            font-size: 1rem;
-            transition: all 0.3s ease;
-        }
-
-        /* 右侧滚动内容 */
-        .content-section {
-            margin-left: calc(var(--sidebar-width) + 2rem);
-            width: calc(100% - var(--sidebar-width) - 2rem);
-            display: flex;
-            flex-direction: column;
-            /* 缩小纵向布局时卡片上下的间距 */
-            gap: 1.2rem;
-            min-height: 100vh;
-        }
-
-        .card {
-            background: var(--card-bg);
-            border-radius: 15px;
-            padding: 2rem;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
-            transition: all 0.3s ease;
-            opacity: 0;
-            transform: translateY(20px);
-        }
-
-        .card.active {
-            opacity: 1;
-            transform: translateY(0);
-        }
-
-        /* 鼠标悬浮在右侧卡片上的动效 */
-        .card:hover {
-            transform: scale(1.02);
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
-        }
-
-        .card-title {
-            font-size: 1.4rem;
-            color: var(--dark);
-            margin-bottom: 1.5rem;
-            padding-bottom: 0.5rem;
-            border-bottom: 2px solid var(--primary);
-        }
-
-        /* 时间轴样式 */
-        .timeline {
-            position: relative;
-            padding-left: 30px;
-        }
-
-        .timeline::before {
-            content: '';
-            position: absolute;
-            left: 10px;
-            top: 0;
-            bottom: 0;
-            width: 2px;
-            background: var(--primary);
-        }
-
-        .timeline-item {
-            position: relative;
-            margin-bottom: 0.5rem;
-            padding-bottom: 1.5rem;
-        }
-
-        .timeline-item::before {
-            content: '';
-            position: absolute;
-            left: -30px;
-            top: 5px;
-            width: 12px;
-            height: 12px;
-            border-radius: 50%;
-            background: var(--secondary);
-            border: 2px solid white;
-            box-shadow: 0 0 0 3px var(--secondary);
-        }
-
-        /* 证书展示 */
-        .certificate-scroll {
-            overflow: hidden;
-            position: relative;
-            padding: 1rem 0;
-            margin: 0 -2rem;
-        }
-
-        .certificate-container {
-            display: flex;
-            animation: scroll 20s linear infinite;
-            gap: 1.5rem;
-            padding: 0 2rem;
-            width: max-content;
-        }
-
-        .certificate-container:hover {
-            animation-play-state: paused;
-        }
-
-        .certificate-img {
-            width: 220px;
-            height: 160px;
-            object-fit: cover;
-            border-radius: 8px;
-            border: 2px solid var(--light);
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-            transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-            flex-shrink: 0;
-            cursor: pointer;
-            transform-origin: center center;
-        }
-
-        .certificate-img:hover {
-            transform: scale(1.8);
-            z-index: 10;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-        }
-
-        @keyframes scroll {
-            0% {
-                transform: translateX(0);
-            }
-            /*5 张图片的总宽度 + 4 个间隙的总间距，不包括需要重复的图片数量，计算图片容器需要移动的总距离*/
-            100% {
-                transform: translateX(calc(-220px * 5 - 1.5rem * 4));
-            }
-        }
-
-        /* 响应式设计 */
-        @media (max-width: 1200px) {
-            .profile-section {
-                left: 2rem;
-            }
-        }
-
-        @media (max-width: 992px) {
-            .profile-section {
-                position: relative;
-                width: 100%;
-                height: auto;
-                left: auto;
-                top: auto;
-                margin-bottom: 1rem;/*纵向排布时个人信息卡片与内容卡片之间的间距*/
+    <!-- 设置文档语言为中文 -->
+    <head>
+        <!-- 字符编码设置，使用 UTF-8 编码 -->
+        <meta charset="UTF-8">
+        <!-- 响应式设计视口设置，让页面在不同设备上正确显示 -->
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <!-- 页面标题，显示在浏览器标签上 -->
+        <title>个人简历 - 张三</title>
+        <!-- 引入 Font Awesome 图标库，用于展示各种图标 -->
+        <link href="https://cdn.bootcdn.net/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+        <!-- 自定义样式，使用内联样式表 -->
+        <style>
+            /* 定义全局变量，方便后续使用和修改颜色、宽度等样式 */
+            :root {
+                --primary: #3498db; /* 主色调，用于强调部分 */
+                --secondary: #2ecc71; /* 次色调，辅助主色调 */
+                --dark: #2c3e50; /* 深色调，用于标题等 */
+                --light: #ecf0f1; /* 浅色调，用于背景等 */
+                --card-bg: rgba(255, 255, 255, 0.9); /* 卡片背景色，半透明白色 */
+                --sidebar-width: 300px; /* 左侧栏宽度 */
             }
 
-            .content-section {
-                margin-left: 0;
-                width: 100%;
-                gap: 1rem;/*下方卡片在纵向排布时的上下间距*/
+            /* 全局样式重置，清除所有元素的默认内外边距，并设置盒模型为边框盒 */
+            * {
+                margin: 0;
+                padding: 0;
+                box-sizing: border-box;
+                font-family: 'Segoe UI', 'Microsoft YaHei', sans-serif; /* 设置字体 */
             }
 
-            .contact-scroll {
-                /*max-height: calc(100vh - 925px);*/ /* 根据屏幕高度动态调整 */
-                max-height: 150px;
-            }
-        }
-
-        @media (max-width: 768px) {
+            /* 页面主体样式 */
             body {
-                padding: 1rem;
+                background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%); /* 背景渐变 */
+                min-height: 100vh; /* 最小高度为视口高度 */
+                padding: 2rem; /* 内边距 */
             }
 
+            /* 页面容器样式，用于包裹页面主要内容 */
+            .container {
+                max-width: 1200px; /* 最大宽度 */
+                margin: 0 auto; /* 水平居中 */
+                position: relative; /* 相对定位 */
+            }
+
+            /* 左侧固定栏样式，用于展示个人信息和联系方式 */
+            .profile-section {
+                width: var(--sidebar-width); /* 宽度使用全局变量 */
+                position: fixed; /* 固定定位 */
+                left: calc(50% - 600px); /* 左侧位置计算 */
+                top: 2rem; /* 顶部距离 */
+                display: flex; /* 弹性布局 */
+                flex-direction: column; /* 垂直排列 */
+                gap: 1.5rem; /* 子元素间距 */
+                overflow: hidden; /* 溢出隐藏 */
+                /* 添加阴影虚化效果 */
+                box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1); /* 阴影 */
+                backdrop-filter: blur(5px); /* 背景虚化 */
+                border-radius: 15px; /* 圆角 */
+            }
+
+            /* 左侧栏卡片样式 */
+            .profile-card {
+                background: var(--card-bg); /* 背景色使用全局变量 */
+                border-radius: 15px; /* 圆角 */
+                padding: 2rem; /* 内边距 */
+                box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1); /* 阴影 */
+                overflow: hidden; /* 溢出隐藏 */
+                /* 确保子元素溢出时不影响圆角 */
+                transition: transform 0.3s ease; /* 鼠标悬浮时的动画过渡 */
+            }
+
+            /* 鼠标悬浮在左侧栏卡片上的动效，放大 1.02 倍 */
+            .profile-card:hover {
+                transform: scale(1.02);
+            }
+
+            /* 联系方式滚动容器样式 */
+            .contact-scroll {
+                overflow-y: auto; /* 垂直方向溢出时显示滚动条 */
+                padding-right: 0.5rem; /* 右侧内边距 */
+                border-radius: 8px; /* 圆角 */
+                /* 添加圆角 */
+                max-height: calc(100vh - 420px); /* 根据窗口高度动态调整最大高度 */
+            }
+
+            /* 自定义滚动条宽度 */
+            .contact-scroll::-webkit-scrollbar {
+                width: 6px;
+            }
+
+            /* 自定义滚动条轨道样式 */
+            .contact-scroll::-webkit-scrollbar-track {
+                background: rgba(0, 0, 0, 0.05); /* 轨道背景色 */
+                border-radius: 3px; /* 圆角 */
+            }
+
+            /* 自定义滚动条滑块样式 */
+            .contact-scroll::-webkit-scrollbar-thumb {
+                background: rgba(0, 0, 0, 0.2); /* 滑块背景色 */
+                border-radius: 3px; /* 圆角 */
+            }
+
+            /* 头像样式 */
             .avatar {
-                width: 140px;
-                height: 140px;
+                width: 180px; /* 宽度 */
+                height: 180px; /* 高度 */
+                border-radius: 50%; /* 圆形 */
+                object-fit: cover; /* 图片填充方式 */
+                border: 5px solid white; /* 白色边框 */
+                box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1); /* 阴影 */
+                transition: all 0.3s ease; /* 动画过渡 */
+                display: block; /* 块级元素 */
+                margin: 0 auto; /* 水平居中 */
             }
 
+            /* 姓名样式 */
+            .name {
+                font-size: 1.8rem; /* 字体大小 */
+                font-weight: bold; /* 字体加粗 */
+                color: var(--dark); /* 字体颜色使用全局变量 */
+                margin: 1rem 0 0.5rem; /* 外边距 */
+                text-align: center; /* 文本居中 */
+            }
+
+            /* 英文名样式 */
+            .english-name {
+                font-size: 1.1rem; /* 字体大小 */
+                color: #666; /* 字体颜色 */
+                text-align: center; /* 文本居中 */
+                margin-bottom: 1.5rem; /* 底部外边距 */
+            }
+
+            /* 联系方式样式 */
+            .contact-list {
+                margin-top: 0rem; /* 顶部外边距 */
+            }
+
+            /* 单个联系方式项样式 */
+            .contact-item {
+                display: flex; /* 弹性布局 */
+                align-items: center; /* 垂直居中 */
+                padding: 0.8rem; /* 内边距 */
+                margin-bottom: 0.8rem; /* 底部外边距 */
+                background: rgba(52, 152, 219, 0.05); /* 背景色 */
+                border-radius: 8px; /* 圆角 */
+                transition: all 0.3s ease; /* 动画过渡 */
+            }
+
+            /* 鼠标悬浮在联系方式项上的动效，背景色加深并向右平移 5px */
+            .contact-item:hover {
+                background: rgba(52, 152, 219, 0.1);
+                transform: translateX(5px);
+            }
+
+            /* 最后一个联系方式项底部外边距为 0 */
+            .contact-item:last-child {
+                margin-bottom: 0; /* 最后一个联系卡片与滚动容器底部对齐 */
+            }
+
+            /* 联系方式图标样式 */
+            .contact-icon {
+                width: 36px; /* 宽度 */
+                height: 36px; /* 高度 */
+                background: var(--primary); /* 背景色使用全局变量 */
+                color: white; /* 字体颜色 */
+                border-radius: 50%; /* 圆形 */
+                display: flex; /* 弹性布局 */
+                align-items: center; /* 垂直居中 */
+                justify-content: center; /* 水平居中 */
+                margin-right: 1rem; /* 右侧外边距 */
+                font-size: 1rem; /* 字体大小 */
+                transition: all 0.3s ease; /* 动画过渡 */
+            }
+
+            /* 右侧滚动内容样式 */
+            .content-section {
+                margin-left: calc(var(--sidebar-width) + 2rem); /* 左侧外边距 */
+                width: calc(100% - var(--sidebar-width) - 2rem); /* 宽度 */
+                display: flex; /* 弹性布局 */
+                flex-direction: column; /* 垂直排列 */
+                /* 缩小纵向布局时卡片上下的间距 */
+                gap: 1.2rem; /* 子元素间距 */
+                min-height: 100vh; /* 最小高度为视口高度 */
+            }
+
+            /* 卡片样式 */
+            .card {
+                background: var(--card-bg); /* 背景色使用全局变量 */
+                border-radius: 15px; /* 圆角 */
+                padding: 2rem; /* 内边距 */
+                box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1); /* 阴影 */
+                transition: all 0.3s ease; /* 动画过渡 */
+                opacity: 0; /* 初始透明度为 0 */
+                transform: translateY(20px); /* 初始向下平移 20px */
+            }
+
+            /* 卡片进入视口时的激活状态，透明度变为 1，平移回原位 */
+            .card.active {
+                opacity: 1;
+                transform: translateY(0);
+            }
+
+            /* 鼠标悬浮在右侧卡片上的动效，放大 1.02 倍 */
+            .card:hover {
+                transform: scale(1.02);
+                box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            }
+
+            /* 卡片标题样式 */
+            .card-title {
+                font-size: 1.4rem; /* 字体大小 */
+                color: var(--dark); /* 字体颜色使用全局变量 */
+                margin-bottom: 1.5rem; /* 底部外边距 */
+                padding-bottom: 0.5rem; /* 底部内边距 */
+                border-bottom: 2px solid var(--primary); /* 底部边框 */
+            }
+
+            /* 时间轴样式 */
+            .timeline {
+                position: relative; /* 相对定位 */
+                padding-left: 30px; /* 左侧内边距 */
+            }
+
+            /* 时间轴的垂直线 */
+            .timeline::before {
+                content: ''; /* 伪元素内容为空 */
+                position: absolute; /* 绝对定位 */
+                left: 10px; /* 左侧位置 */
+                top: 0; /* 顶部位置 */
+                bottom: 0; /* 底部位置 */
+                width: 2px; /* 宽度 */
+                background: var(--primary); /* 背景色使用全局变量 */
+            }
+
+            /* 时间轴上的单个项目样式 */
+            .timeline-item {
+                position: relative; /* 相对定位 */
+                margin-bottom: 0.5rem; /* 底部外边距 */
+                padding-bottom: 1.5rem; /* 底部内边距 */
+            }
+
+            /* 时间轴项目的圆点 */
+            .timeline-item::before {
+                content: ''; /* 伪元素内容为空 */
+                position: absolute; /* 绝对定位 */
+                left: -27px; /* 左侧位置 */
+                top: 5px; /* 顶部位置 */
+                width: 12px; /* 宽度 */
+                height: 12px; /* 高度 */
+                border-radius: 50%; /* 圆形 */
+                background: var(--secondary); /* 背景色使用全局变量 */
+                border: 2px solid white; /* 白色边框 */
+                box-shadow: 0 0 0 3px var(--secondary); /* 阴影 */
+            }
+
+            /* 时间轴项目标题样式，添加过渡效果 */
+            .timeline-title {
+                transition: transform 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94); /* 添加过渡效果 */
+            }
+
+            /* 鼠标悬浮在时间轴项目标题上的动效，向右平移 10px */
+            .timeline-title:hover {
+                transform: translateX(10px);
+            }            
+
+            /* 证书展示滚动容器样式 */
+            .certificate-scroll {
+                overflow: hidden; /* 溢出隐藏 */
+                position: relative; /* 相对定位 */
+                padding: 1rem 0; /* 上下内边距 */
+                margin: 0 -2rem; /* 左右外边距 */
+            }
+
+            /* 证书展示容器样式，使用动画实现滚动效果 */
+            .certificate-container {
+                display: flex; /* 弹性布局 */
+                animation: scroll 20s linear infinite; /* 动画效果 */
+                gap: 1.5rem; /* 子元素间距 */
+                padding: 0 2rem; /* 左右内边距 */
+                width: max-content; /* 宽度为内容最大宽度 */
+            }
+
+            /* 鼠标悬浮在证书展示容器上时，暂停动画 */
+            .certificate-container:hover {
+                animation-play-state: paused;
+            }
+
+            /* 证书图片样式 */
             .certificate-img {
-                width: 180px;
-                height: 130px;
+                width: 220px; /* 宽度 */
+                height: 160px; /* 高度 */
+                object-fit: cover; /* 图片填充方式 */
+                border-radius: 8px; /* 圆角 */
+                border: 2px solid var(--light); /* 边框 */
+                box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1); /* 阴影 */
+                transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94); /* 动画过渡 */
+                flex-shrink: 0; /* 不缩小 */
+                cursor: pointer; /* 鼠标指针样式 */
+                transform-origin: center center; /* 变换原点 */
             }
 
+            /* 鼠标悬浮在证书图片上的动效，放大 1.8 倍 */
+            .certificate-img:hover {
+                transform: scale(1.8);
+                z-index: 10; /* 层级提高 */
+                box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            }
+
+            /* 证书滚动动画关键帧 */
             @keyframes scroll {
+                0% {
+                    transform: translateX(0); /* 初始位置 */
+                }
+                /* 5 张图片的总宽度 + 4 个间隙的总间距，不包括需要重复的图片数量，计算图片容器需要移动的总距离 */
                 100% {
-                    transform: translateX(calc(-180px * 5 - 1rem * 4));
+                    transform: translateX(calc(-220px * 5 - 1.5rem * 4)); /* 最终位置 */
                 }
             }
-        }
 
-        /* 联系方式去除链接默认样式 */
-        .contact-item a {
-            color: inherit;
-            text-decoration: none;
-        }
-
-        /* 个人特长样式增强 */
-            /* 
-        * 样式规则集，用于定义 `#specialty-card` 元素内的段落 (`p`) 的样式。
-        * 包括相对定位、左侧内边距、行高、字体大小、颜色以及悬停时的平移效果。
-        */
-        #specialty-card p {
-            position: relative;
-            padding-left: 40px;
-            margin-bottom: 1.2rem;
-            line-height: 1.6;
-            font-size: 1.1rem;
-            color: #4a5568;
-            transition: transform 0.3s ease;
-        }
-
-        /* 
-            * 使用伪元素 `::before` 在段落前添加图标。
-            * 图标来自 Font Awesome 6 Free 字体库，使用线性渐变背景和透明文本颜色实现渐变效果。
-            */
-        #specialty-card p::before {
-            content: "\f121";
-            font-family: "Font Awesome 6 Free";
-            font-weight: 900;
-            position: absolute;
-            left: 0;
-            top: 2px;
-            color: var(--primary);
-            font-size: 1.4rem;
-            width: 30px;
-            height: 30px;
-            background: linear-gradient(45deg, var(--primary), var(--secondary));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-            color: transparent; /* 关键属性 */
-        }
-
-        /* 
-            * 针对第二个段落的伪元素 `::before`，使用不同的 Font Awesome 图标。
-            */
-        #specialty-card p:nth-child(2)::before {
-            content: "\f0c0";
-        }
-
-        /* 
-            * 针对最后一个段落的伪元素 `::before`，使用不同的 Font Awesome 图标。
-            */
-        #specialty-card p:last-child::before {
-            content: "\f0eb";
-        }
-
-        /* 
-            * 定义 `#specialty-card` 内 `strong` 元素的样式。
-            * 使用线性渐变背景和透明文本颜色实现渐变效果。
-            */
-        #specialty-card strong {
-            background: linear-gradient(45deg, var(--primary), var(--secondary));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-            color: transparent; /* 关键属性 */
-            font-weight: 600;
-        }
-
-        /* 
-            * 定义 `#specialty-card` 内段落 (`p`) 的悬停效果。
-            * 悬停时段落向右平移 10px。
-            */
-        #specialty-card p:hover {
-            transform: translateX(10px);
-        }
-
-        /* 
-            * 定义 `#specialty-card` 内除最后一个段落外的所有段落的底部边框样式。
-            * 使用虚线边框和半透明颜色。
-            */
-        #specialty-card p:not(:last-child) {
-            border-bottom: 1px dashed rgba(52, 152, 219, 0.2);
-            padding-bottom: 1rem;
-        }
-    </style>
-</head>
-
-<body>
-    <!-- 容器 -->
-    <div class="container">
-        <!-- 左侧栏 -->
-        <section class="profile-section">
-            <div class="profile-card">
-                <div class="avatar-container">
-                    <!-- 头像 -->
-                    <img src="./pic.png" alt="个人头像" class="avatar">
-                    <!-- 姓名 -->
-                    <h1 class="name">张三</h1>
-                    <!-- 英文名 -->
-                    <p class="english-name">Zhang San</p>
-                </div>
-
-                <div class="contact-scroll">
-                    <div class="contact-list">
-                        <!-- 微信联系方式 -->
-                        <div class="contact-item">
-                            <div class="contact-icon"><i class="fab fa-weixin"></i></div>
-                            <div>
-                                <strong>微信</strong>
-                                <p>zhangsan123</p>
-                            </div>
-                        </div>
-                        <!-- 其他联系方式项 -->
-                        <div class="contact-item">
-                            <div class="contact-icon"><i class="fab fa-qq"></i></div>
-                            <div>
-                                <strong>QQ</strong>
-                                <p>123456789</p>
-                            </div>
-                        </div>
-                        <div class="contact-item">
-                            <div class="contact-icon"><i class="fas fa-phone"></i></div>
-                            <div>
-                                <strong>手机</strong>
-                                <p>138-1234-5678</p>
-                            </div>
-                        </div>
-                        <div class="contact-item">
-                            <div class="contact-icon"><i class="fas fa-envelope"></i></div>
-                            <div>
-                                <strong>邮箱</strong>
-                                <p>zhangsan@example.com</p>
-                            </div>
-                        </div>
-                        <!-- 为B站添加跳转链接 -->
-                        <div class="contact-item">
-                            <div class="contact-icon"><i class="fab fa-bilibili"></i></div>
-                            <a href="https://space.bilibili.com/your-bilibili-id" target="_blank">
-                                <div>
-                                    <strong>B站</strong>
-                                    <p>张三的B站</p>
-                                </div>
-                            </a>
-                        </div>
-                        <!-- 为GitHub添加跳转链接 -->
-                        <div class="contact-item">
-                            <div class="contact-icon"><i class="fab fa-github"></i></div>
-                            <a href="https://github.com/zhangsan" target="_blank">
-                                <div>
-                                    <strong>GitHub</strong>
-                                    <p>github.com/zhangsan</p>
-                                </div>
-                            </a>
-                        </div>
-                        <!-- 为Gitee添加跳转链接 -->
-                        <div class="contact-item">
-                            <div class="contact-icon"><i class="fab fa-gitlab"></i></div>
-                            <a href="https://gitee.com/zhangsan" target="_blank">
-                                <div>
-                                    <strong>Gitee</strong>
-                                    <p>gitee.com/zhangsan</p>
-                                </div>
-                            </a>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <!-- 右侧内容 -->
-        <section class="content-section">
-            <!-- 教育经历与荣誉卡片 -->
-            <div class="card" id="education-card">
-                <h2 class="card-title">教育经历与荣誉</h2>
-                <div class="timeline">
-                    <!-- 时间轴项 -->
-                    <div class="timeline-item">
-                        <div class="timeline-date">2020 - 2024</div>
-                        <h3 class="timeline-title">XX大学 - 计算机科学与技术</h3>
-                        <p>GPA: 3.8/4.0 | 专业排名: 前5%</p>
-                        <p>获得国家奖学金、校级三好学生</p>
-                    </div>
-                    <div class="timeline-item">
-                        <div class="timeline-date">2022</div>
-                        <h3 class="timeline-title">英语六级</h3>
-                        <p>成绩: 580分</p>
-                    </div>
-                    <div class="timeline-item">
-                        <div class="timeline-date">2021</div>
-                        <h3 class="timeline-title">计算机技术与软件专业技术资格</h3>
-                        <p>软件设计师(中级)认证</p>
-                    </div>
-                </div>
-            </div>
-
-            <div class="card" id="competition-card">
-                <h2 class="card-title">学科竞赛</h2>
-                <div class="timeline">
-                    <div class="timeline-item">
-                        <div class="timeline-date">2023</div>
-                        <h3 class="timeline-title">全国大学生程序设计竞赛</h3>
-                        <p>国家级一等奖 | 负责算法设计与实现</p>
-                    </div>
-                    <div class="timeline-item">
-                        <div class="timeline-date">2022</div>
-                        <h3 class="timeline-title">"互联网+"大学生创新创业大赛</h3>
-                        <p>省级金奖 | 项目负责人</p>
-                    </div>
-                    <div class="timeline-item">
-                        <div class="timeline-date">2021</div>
-                        <h3 class="timeline-title">数学建模竞赛</h3>
-                        <p>全国二等奖 | 负责模型建立与求解</p>
-                    </div>
-                </div>
-            </div>
-
-            <div class="card" id="project-card">
-                <h2 class="card-title">论文与项目</h2>
-                <div class="timeline">
-                    <div class="timeline-item">
-                        <div class="timeline-date">2023</div>
-                        <h3 class="timeline-title">基于深度学习的图像识别系统</h3>
-                        <p>发表论文于《计算机应用研究》</p>
-                        <p>项目链接: github.com/zhangsan/image-recognition</p>
-                    </div>
-                    <div class="timeline-item">
-                        <div class="timeline-date">2022</div>
-                        <h3 class="timeline-title">校园二手交易平台</h3>
-                        <p>负责前端开发与UI设计</p>
-                        <p>用户量超过5000+</p>
-                    </div>
-                </div>
-            </div>
-
-            <!-- 个人特长卡片模块 -->
-            <div class="card" id="specialty-card">
-                <h2 class="card-title">个人特长</h2>
-                <p>具备扎实的编程基础，熟练掌握 Java、Python 等编程语言。</p>
-                <p>拥有良好的团队协作能力，曾在多个项目中担任核心成员，带领团队完成任务。</p>
-                <p>具备较强的学习能力，能够快速掌握新的知识和技能，适应新的工作环境。</p>
-            </div>
-
-            <div class="card" id="certificate-card">
-                <h2 class="card-title">证书展示</h2>
-                <div class="certificate-scroll">
-                    <div class="certificate-container">
-                        <img src="https://dummyimage.com/220x160/008080/ffffff&text=风景1" alt="证书" class="certificate-img" loading="lazy">
-                        <img src="https://dummyimage.com/220x160/008B8B/ffffff&text=风景2" alt="证书" class="certificate-img" loading="lazy">
-                        <img src="https://dummyimage.com/220x160/009696/ffffff&text=风景3" alt="证书" class="certificate-img" loading="lazy">
-                        <img src="https://dummyimage.com/220x160/00A3A3/ffffff&text=风景4" alt="证书" class="certificate-img" loading="lazy">
-                        <img src="https://dummyimage.com/220x160/00B0B0/ffffff&text=风景5" alt="证书" class="certificate-img" loading="lazy">
-                        <!-- 重复图片实现无缝循环 -->
-                        <img src="https://dummyimage.com/220x160/008080/ffffff&text=风景1" alt="证书" class="certificate-img" loading="lazy">
-                        <img src="https://dummyimage.com/220x160/008B8B/ffffff&text=风景2" alt="证书" class="certificate-img" loading="lazy">
-                        <img src="https://dummyimage.com/220x160/009696/ffffff&text=风景3" alt="证书" class="certificate-img" loading="lazy">
-                    </div>
-                </div>
-            </div>
-        </section>
-    </div>
-
-    <script>
-        // 页面加载完成后执行
-        document.addEventListener('DOMContentLoaded', () => {
-            // 卡片进入视口动画
-            const observer = new IntersectionObserver((entries) => {
-                entries.forEach(entry => {
-                    if (entry.isIntersecting) {
-                        entry.target.classList.add('active');
-                    }
-                });
-            }, {
-                threshold: 0.1
-            });
-
-            document.querySelectorAll('.card').forEach(card => {
-                observer.observe(card);
-            });
-
-            // 自动调整证书滚动速度
-            const updateScrollSpeed = () => {
-                const container = document.querySelector('.certificate-container');
-                const imgs = document.querySelectorAll('.certificate-img');
-                const imgWidth = imgs[0].offsetWidth;
-                const gap = 24;
-                // 与CSS中的gap值一致
-                const totalWidth = (imgWidth + gap) * imgs.length;
-                const viewportWidth = document.documentElement.clientWidth;
-                const speedRatio = viewportWidth < 768 ? 0.8 : 1;
-
-                container.style.animationDuration = `${totalWidth / 100 * speedRatio}s`;
+            /* 响应式设计，屏幕宽度小于 1200px 时，调整左侧栏位置 */
+            @media (max-width: 1200px) {
+                .profile-section {
+                    left: 2rem;
+                }
             }
 
-            window.addEventListener('resize', updateScrollSpeed);
-            updateScrollSpeed();
+            /* 响应式设计，屏幕宽度小于 992px 时，调整左侧栏和右侧内容布局 */
+            @media (max-width: 992px) {
+                .profile-section {
+                    position: relative; /* 相对定位 */
+                    width: 100%; /* 宽度为 100% */
+                    height: auto; /* 高度自适应 */
+                    left: auto; /* 左侧位置自动 */
+                    top: auto; /* 顶部位置自动 */
+                    margin-bottom: 1rem; /* 纵向排布时个人信息卡片与内容卡片之间的间距 */
+                }
 
-            // 联系图标动画
-            /**
-             * 为所有带有类名 'contact-item' 的元素添加鼠标悬停动画效果。
-             * 当鼠标进入元素时，其子元素 '.contact-icon' 会旋转 15 度并放大 1.1 倍。
-             * 当鼠标离开元素时，动画效果会被移除，恢复原始状态。
+                .content-section {
+                    margin-left: 0; /* 左侧外边距为 0 */
+                    width: 100%; /* 宽度为 100% */
+                    gap: 1rem; /* 下方卡片在纵向排布时的上下间距 */
+                }
+
+                .contact-scroll {
+                    /* max-height: calc(100vh - 925px); */ /* 根据屏幕高度动态调整 */
+                    max-height: 150px; /* 最大高度为 150px */
+                }
+            }
+
+            /* 响应式设计，屏幕宽度小于 768px 时，调整页面内元素大小和动画 */
+            @media (max-width: 768px) {
+                body {
+                    padding: 1rem; /* 内边距 */
+                }
+
+                .avatar {
+                    width: 140px; /* 宽度 */
+                    height: 140px; /* 高度 */
+                }
+
+                .certificate-img {
+                    width: 180px; /* 宽度 */
+                    height: 130px; /* 高度 */
+                }
+
+                @keyframes scroll {
+                    100% {
+                        transform: translateX(calc(-180px * 5 - 1rem * 4)); /* 最终位置 */
+                    }
+                }
+            }
+
+            /* 联系方式去除链接默认样式 */
+            .contact-item a {
+                color: inherit; /* 继承父元素颜色 */
+                text-decoration: none; /* 去除下划线 */
+            }
+
+            /* 个人特长样式增强 */
+            /* 
+             * 样式规则集，用于定义 `#specialty-card` 元素内的段落 (`p`) 的样式。
+             * 包括相对定位、左侧内边距、行高、字体大小、颜色以及悬停时的平移效果。
              */
-            document.querySelectorAll('.contact-item').forEach(item => {
-                item.addEventListener('mouseenter', () => {
-                    item.querySelector('.contact-icon').style.transform = 'rotate(15deg) scale(1.1)';
+            #specialty-card p {
+                position: relative; /* 相对定位 */
+                padding-left: 40px; /* 左侧内边距 */
+                margin-bottom: 1.2rem; /* 底部外边距 */
+                line-height: 1.6; /* 行高 */
+                font-size: 1.1rem; /* 字体大小 */
+                color: #4a5568; /* 字体颜色 */
+                transition: transform 0.3s ease; /* 动画过渡 */
+            }
+
+            /* 
+             * 使用伪元素 `::before` 在段落前添加图标。
+             * 图标来自 Font Awesome 6 Free 字体库，使用线性渐变背景和透明文本颜色实现渐变效果。
+             */
+            #specialty-card p::before {
+                content: "\f121"; /* 图标代码 */
+                font-family: "Font Awesome 6 Free"; /* 字体库 */
+                font-weight: 900; /* 字体粗细 */
+                position: absolute; /* 绝对定位 */
+                left: 0; /* 左侧位置 */
+                top: 2px; /* 顶部位置 */
+                color: var(--primary); /* 字体颜色使用全局变量 */
+                font-size: 1.4rem; /* 字体大小 */
+                width: 30px; /* 宽度 */
+                height: 30px; /* 高度 */
+                background: linear-gradient(45deg, var(--primary), var(--secondary)); /* 背景渐变 */
+                -webkit-background-clip: text; /* 背景裁剪为文本 */
+                -webkit-text-fill-color: transparent; /* 文本颜色透明 */
+                background-clip: text; /* 背景裁剪为文本 */
+                color: transparent; /* 关键属性 */
+            }
+
+            /* 
+             * 针对第二个段落的伪元素 `::before`，使用不同的 Font Awesome 图标。
+             */
+            #specialty-card p:nth-child(2)::before {
+                content: "\f0c0"; /* 图标代码 */
+            }
+
+            /* 
+             * 针对最后一个段落的伪元素 `::before`，使用不同的 Font Awesome 图标。
+             */
+            #specialty-card p:last-child::before {
+                content: "\f0eb"; /* 图标代码 */
+            }
+
+            /* 
+             * 定义 `#specialty-card` 内 `strong` 元素的样式。
+             * 使用线性渐变背景和透明文本颜色实现渐变效果。
+             */
+            #specialty-card strong {
+                background: linear-gradient(45deg, var(--primary), var(--secondary)); /* 背景渐变 */
+                -webkit-background-clip: text; /* 背景裁剪为文本 */
+                -webkit-text-fill-color: transparent; /* 文本颜色透明 */
+                background-clip: text; /* 背景裁剪为文本 */
+                color: transparent; /* 关键属性 */
+                font-weight: 600; /* 字体粗细 */
+            }
+
+            /* 
+             * 定义 `#specialty-card` 内段落 (`p`) 的悬停效果。
+             * 悬停时段落向右平移 10px。
+             */
+            #specialty-card p:hover {
+                transform: translateX(10px);
+            }
+
+            /* 
+             * 定义 `#specialty-card` 内除最后一个段落外的所有段落的底部边框样式。
+             * 使用虚线边框和半透明颜色。
+             */
+            #specialty-card p:not(:last-child) {
+                border-bottom: 1px dashed rgba(52, 152, 219, 0.2); /* 底部边框 */
+                padding-bottom: 1rem; /* 底部内边距 */
+            }
+
+            /* 实习经历样式 */
+            .info-item {
+                margin-bottom: 1.5rem; /* 底部外边距 */
+            }
+
+            /* 实习经历标题样式，添加过渡效果 */
+            .info-title {
+                font-size: 1.2rem; /* 字体大小 */
+                color: var(--dark); /* 字体颜色使用全局变量 */
+                margin-bottom: 0.5rem; /* 底部外边距 */
+                transition: transform 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94); /* 添加过渡效果 */
+            }
+
+            /* 鼠标悬浮在实习经历标题上的动效，向右平移 10px */
+            .info-title:hover {
+                transform: translateX(10px);
+            }
+
+            /* 实习经历日期样式 */
+            .info-date {
+                font-size: 1rem; /* 字体大小 */
+                color: #666; /* 字体颜色 */
+                margin-bottom: 0.5rem; /* 底部外边距 */
+            }
+
+            /* 实习经历描述样式 */
+            .info-description {
+                font-size: 1rem; /* 字体大小 */
+                color: #4a5568; /* 字体颜色 */
+                line-height: 1.6; /* 行高 */
+            }
+        </style>
+    </head>
+
+    <body>
+        <!-- 容器，包裹整个页面内容 -->
+        <div class="container">
+            <!-- 左侧栏，展示个人信息和联系方式 -->
+            <section class="profile-section">
+                <div class="profile-card">
+                    <div class="avatar-container">
+                        <!-- 头像 -->
+                        <img src="./pic.png" alt="个人头像" class="avatar">
+                        <!-- 姓名 -->
+                        <h1 class="name">张三</h1>
+                        <!-- 英文名 -->
+                        <p class="english-name">Zhang San</p>
+                    </div>
+
+                    <div class="contact-scroll">
+                        <div class="contact-list">
+                            <!-- 微信联系方式 -->
+                            <div class="contact-item">
+                                <div class="contact-icon"><i class="fab fa-weixin"></i></div>
+                                <div>
+                                    <strong>微信</strong>
+                                    <p>zhangsan123</p>
+                                </div>
+                            </div>
+                            <!-- 其他联系方式项 -->
+                            <div class="contact-item">
+                                <div class="contact-icon"><i class="fab fa-qq"></i></div>
+                                <div>
+                                    <strong>QQ</strong>
+                                    <p>123456789</p>
+                                </div>
+                            </div>
+                            <div class="contact-item">
+                                <div class="contact-icon"><i class="fas fa-phone"></i></div>
+                                <div>
+                                    <strong>手机</strong>
+                                    <p>138-1234-5678</p>
+                                </div>
+                            </div>
+                            <div class="contact-item">
+                                <div class="contact-icon"><i class="fas fa-envelope"></i></div>
+                                <div>
+                                    <strong>邮箱</strong>
+                                    <p>zhangsan@example.com</p>
+                                </div>
+                            </div>
+                            <!-- 为B站添加跳转链接 -->
+                            <div class="contact-item">
+                                <div class="contact-icon"><i class="fab fa-bilibili"></i></div>
+                                <a href="https://space.bilibili.com/your-bilibili-id" target="_blank">
+                                    <div>
+                                        <strong>B站</strong>
+                                        <p>张三的B站</p>
+                                    </div>
+                                </a>
+                            </div>
+                            <!-- 为GitHub添加跳转链接 -->
+                            <div class="contact-item">
+                                <div class="contact-icon"><i class="fab fa-github"></i></div>
+                                <a href="https://github.com/zhangsan" target="_blank">
+                                    <div>
+                                        <strong>GitHub</strong>
+                                        <p>github.com/zhangsan</p>
+                                    </div>
+                                </a>
+                            </div>
+                            <!-- 为Gitee添加跳转链接 -->
+                            <div class="contact-item">
+                                <div class="contact-icon"><i class="fab fa-gitlab"></i></div>
+                                <a href="https://gitee.com/zhangsan" target="_blank">
+                                    <div>
+                                        <strong>Gitee</strong>
+                                        <p>gitee.com/zhangsan</p>
+                                    </div>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 右侧内容，展示教育经历、竞赛、项目等信息 -->
+            <section class="content-section">
+                <!-- 教育经历与荣誉卡片 -->
+                <div class="card" id="education-card">
+                    <h2 class="card-title">教育经历与荣誉</h2>
+                    <div class="timeline">
+                        <!-- 时间轴项 -->
+                        <div class="timeline-item">
+                            <div class="timeline-date">2020 - 2024</div>
+                            <h3 class="timeline-title">XX大学 - 计算机科学与技术</h3>
+                            <p>GPA: 3.8/4.0 | 专业排名: 前5%</p>
+                            <p>获得国家奖学金、校级三好学生</p>
+                        </div>
+                        <div class="timeline-item">
+                            <div class="timeline-date">2022</div>
+                            <h3 class="timeline-title">英语六级</h3>
+                            <p>成绩: 580分</p>
+                        </div>
+                        <div class="timeline-item">
+                            <div class="timeline-date">2021</div>
+                            <h3 class="timeline-title">计算机技术与软件专业技术资格</h3>
+                            <p>软件设计师(中级)认证</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 学科竞赛卡片 -->
+                <div class="card" id="competition-card">
+                    <h2 class="card-title">学科竞赛</h2>
+                    <div class="timeline">
+                        <div class="timeline-item">
+                            <div class="timeline-date">2023</div>
+                            <h3 class="timeline-title">全国大学生程序设计竞赛</h3>
+                            <p>国家级一等奖 | 负责算法设计与实现</p>
+                        </div>
+                        <div class="timeline-item">
+                            <div class="timeline-date">2022</div>
+                            <h3 class="timeline-title">"互联网+"大学生创新创业大赛</h3>
+                            <p>省级金奖 | 项目负责人</p>
+                        </div>
+                        <div class="timeline-item">
+                            <div class="timeline-date">2021</div>
+                            <h3 class="timeline-title">数学建模竞赛</h3>
+                            <p>全国二等奖 | 负责模型建立与求解</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 论文与项目卡片 -->
+                <div class="card" id="project-card">
+                    <h2 class="card-title">论文与项目</h2>
+                    <div class="timeline">
+                        <div class="timeline-item">
+                            <div class="timeline-date">2023</div>
+                            <h3 class="timeline-title">基于深度学习的图像识别系统</h3>
+                            <p>发表论文于《计算机应用研究》</p>
+                            <p>项目链接: github.com/zhangsan/image-recognition</p>
+                        </div>
+                        <div class="timeline-item">
+                            <div class="timeline-date">2022</div>
+                            <h3 class="timeline-title">校园二手交易平台</h3>
+                            <p>负责前端开发与UI设计</p>
+                            <p>用户量超过5000+</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 实习经历卡片模块 -->
+                <div class="card" id="info-card">
+                    <h2 class="card-title">实习经历</h2>
+                    <div class="info-item">
+                        <h3 class="info-title">软件开发实习生</h3>
+                        <p class="info-date">2022年6月 - 2022年8月</p>
+                        <p class="info-description">在XX科技有限公司实习，负责参与开发公司内部管理系统，主要负责前端页面的设计与实现，提升了实际项目开发能力。</p>
+                    </div>
+                    <div class="info-item">
+                        <h3 class="info-title">数据分析实习生</h3>
+                        <p class="info-date">2021年9月 - 2021年12月</p>
+                        <p class="info-description">在YY数据分析公司实习，负责收集和整理数据，进行数据分析和可视化展示，提升了数据分析能力。</p>
+                    </div>
+                </div>
+
+                <!-- 个人特长卡片模块 -->
+                <div class="card" id="specialty-card">
+                    <h2 class="card-title">个人特长</h2>
+                    <p>具备扎实的编程基础，熟练掌握 Java、Python 等编程语言。</p>
+                    <p>拥有良好的团队协作能力，曾在多个项目中担任核心成员，带领团队完成任务。</p>
+                    <p>具备较强的学习能力，能够快速掌握新的知识和技能，适应新的工作环境。</p>
+                </div>
+
+                <!-- 证书展示卡片 -->
+                <div class="card" id="certificate-card">
+                    <h2 class="card-title">证书展示</h2>
+                    <div class="certificate-scroll">
+                        <div class="certificate-container">
+                            <img src="https://dummyimage.com/220x160/008080/ffffff&text=风景1" alt="证书" class="certificate-img" loading="lazy">
+                            <img src="https://dummyimage.com/220x160/008B8B/ffffff&text=风景2" alt="证书" class="certificate-img" loading="lazy">
+                            <img src="https://dummyimage.com/220x160/009696/ffffff&text=风景3" alt="证书" class="certificate-img" loading="lazy">
+                            <img src="https://dummyimage.com/220x160/00A3A3/ffffff&text=风景4" alt="证书" class="certificate-img" loading="lazy">
+                            <img src="https://dummyimage.com/220x160/00B0B0/ffffff&text=风景5" alt="证书" class="certificate-img" loading="lazy">
+                            <!-- 重复图片实现无缝循环 -->
+                            <img src="https://dummyimage.com/220x160/008080/ffffff&text=风景1" alt="证书" class="certificate-img" loading="lazy">
+                            <img src="https://dummyimage.com/220x160/008B8B/ffffff&text=风景2" alt="证书" class="certificate-img" loading="lazy">
+                            <img src="https://dummyimage.com/220x160/009696/ffffff&text=风景3" alt="证书" class="certificate-img" loading="lazy">
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </div>
+
+        <script>
+            // 页面加载完成后执行
+            document.addEventListener('DOMContentLoaded', () => {
+                // 卡片进入视口动画
+                const observer = new IntersectionObserver((entries) => {
+                    entries.forEach(entry => {
+                        if (entry.isIntersecting) {
+                            entry.target.classList.add('active');
+                        }
+                    });
+                }, {
+                    threshold: 0.1
                 });
-                item.addEventListener('mouseleave', () => {
-                    item.querySelector('.contact-icon').style.transform = 'none';
+
+                document.querySelectorAll('.card').forEach(card => {
+                    observer.observe(card);
+                });
+
+                // 自动调整证书滚动速度
+                const updateScrollSpeed = () => {
+                    const container = document.querySelector('.certificate-container');
+                    const imgs = document.querySelectorAll('.certificate-img');
+                    const imgWidth = imgs[0].offsetWidth;
+                    const gap = 24;
+                    // 与CSS中的gap值一致
+                    const totalWidth = (imgWidth + gap) * imgs.length;
+                    const viewportWidth = document.documentElement.clientWidth;
+                    const speedRatio = viewportWidth < 768 ? 0.8 : 1;
+
+                    container.style.animationDuration = `${totalWidth / 100 * speedRatio}s`;
+                }
+
+                window.addEventListener('resize', updateScrollSpeed);
+                updateScrollSpeed();
+
+                // 联系图标动画
+                /**
+                 * 为所有带有类名 'contact-item' 的元素添加鼠标悬停动画效果。
+                 * 当鼠标进入元素时，其子元素 '.contact-icon' 会旋转 15 度并放大 1.1 倍。
+                 * 当鼠标离开元素时，动画效果会被移除，恢复原始状态。
+                 */
+                document.querySelectorAll('.contact-item').forEach(item => {
+                    item.addEventListener('mouseenter', () => {
+                        item.querySelector('.contact-icon').style.transform = 'rotate(15deg) scale(1.1)';
+                    });
+                    item.addEventListener('mouseleave', () => {
+                        item.querySelector('.contact-icon').style.transform = 'none';
+                    });
+                });
+
+                // 响应式调整
+                window.addEventListener('resize', () => {
+                    const isMobile = window.innerWidth <= 992;
+                    const certificateContainer = document.querySelector('.certificate-container');
+                    const animationDuration = parseFloat(getComputedStyle(certificateContainer).animationDuration.replace('s', ''));
+                    certificateContainer.style.animationDuration = isMobile ? `${animationDuration * 0.8}s` : `${animationDuration}s`;
                 });
             });
-
-            // 响应式调整
-            window.addEventListener('resize', () => {
-                const isMobile = window.innerWidth <= 992;
-                const certificateContainer = document.querySelector('.certificate-container');
-                const animationDuration = parseFloat(getComputedStyle(certificateContainer).animationDuration.replace('s', ''));
-                certificateContainer.style.animationDuration = isMobile ? `${animationDuration * 0.8}s` : `${animationDuration}s`;
-            });
-        });
-    </script>
-</body>
-
+        </script>
+    </body>
 </html>    

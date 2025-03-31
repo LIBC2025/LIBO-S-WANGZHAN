@@ -14,3 +14,7 @@
 1. **克隆仓库**：将此仓库克隆到您的本地机器。
    ```bash
    git clone https://github.com/weigo6/resume-site.git
+
+## 示例图片
+
+![image-20250331203815443](readme-img/example.png)
