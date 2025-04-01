@@ -314,9 +314,9 @@
                 0% {
                     transform: translateX(0); /* 初始位置 */
                 }
-                /* 5 张图片的总宽度 + 4 个间隙的总间距，不包括需要重复的图片数量，计算图片容器需要移动的总距离 */
+                /* 5 张图片的总宽度 + 5 个间隙的总间距，不包括需要重复的图片数量，计算图片容器需要移动的总距离 */
                 100% {
-                    transform: translateX(calc(-220px * 5 - 1.5rem * 4)); /* 最终位置 */
+                    transform: translateX(calc(-220px * 5 - 1.5rem * 5)); /* 最终位置 */
                 }
             }
 
@@ -368,7 +368,7 @@
 
                 @keyframes scroll {
                     100% {
-                        transform: translateX(calc(-180px * 5 - 1rem * 4)); /* 最终位置 */
+                        transform: translateX(calc(-180px * 5 - 1.5rem * 5)); /* 最终位置 */
                     }
                 }
             }
