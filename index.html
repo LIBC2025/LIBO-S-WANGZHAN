@@ -399,7 +399,7 @@
              * 图标来自 Font Awesome 6 Free 字体库，使用线性渐变背景和透明文本颜色实现渐变效果。
              */
             #specialty-card p::before {
-                content: "\f121"; /* 图标代码 */
+                content: "\f121"; /* 对默认的p元素添加图标代码 */
                 font-family: "Font Awesome 6 Free"; /* 字体库 */
                 font-weight: 900; /* 字体粗细 */
                 position: absolute; /* 绝对定位 */
@@ -417,9 +417,16 @@
             }
 
             /* 
-             * 针对第二个段落的伪元素 `::before`，使用不同的 Font Awesome 图标。
+             * 针对第一个段落的伪元素 `::before`，使用不同的 Font Awesome 图标。
              */
             #specialty-card p:nth-child(2)::before {
+                content: "\f121"; /* 图标代码 */
+            }
+
+            /* 
+             * 针对第二个段落的伪元素 `::before`，使用不同的 Font Awesome 图标。
+             */
+             #specialty-card p:nth-child(3)::before {
                 content: "\f0c0"; /* 图标代码 */
             }
 
