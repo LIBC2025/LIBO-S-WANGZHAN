@@ -15,6 +15,10 @@
    ```bash
    git clone https://github.com/weigo6/resume-site.git
 
+## 预览链接
+
+⚡电子名片网页预览：[个人简历 - 张三 (weigo6.github.io/resume-site/)](https://weigo6.github.io/resume-site/)
+
 ## 示例图片
 
 ![image-20250331203815443](readme-img/example.png)
